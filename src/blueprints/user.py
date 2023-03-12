@@ -55,7 +55,7 @@ async def talking(message: Message):
 async def select_homework(message: Message):
     if message.text == 'Назад':
         await bp.state_dispenser.delete(message.peer_id)
-        return message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
+        return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
     subject = message.text
     homework = ctx_storage.get('homework')
     if subject not in homework.keys():
@@ -83,6 +83,9 @@ async def add_homework(message: Message):
 
 @bp.on.message(state=States.ADD_HOMEWORK_SUBJECT_STATE)
 async def add_homework_subject(message: Message):
+    if message.text == 'Назад':
+        await bp.state_dispenser.delete(message.peer_id)
+        return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
     subject = message.text
     ctx_storage.set('subject', subject)
     await bp.state_dispenser.set(message.peer_id, States.ADD_HOMEWORK_VALUE_STATE, subject=subject)
@@ -93,6 +96,9 @@ async def add_homework_subject(message: Message):
 
 @bp.on.message(state=States.ADD_HOMEWORK_VALUE_STATE)
 async def add_homework_value(message: Message):
+    if message.text == 'Назад':
+        await bp.state_dispenser.delete(message.peer_id)
+        return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
     value = message.text
     subject = message.state_peer.payload['subject']
     homework = ctx_storage.get('homework')
@@ -104,8 +110,10 @@ async def add_homework_value(message: Message):
     })
     ctx_storage.set('homework', homework)
     save_json('homework.json', homework)
+    await bp.state_dispenser.delete(message.peer_id)
     await message.answer(
-        'Домашка успешно записана'
+        'Домашка успешно записана',
+        keyboard=ctx_storage.get('default_keyboard').get_keyboard()
     )
 
 

@@ -55,6 +55,7 @@ async def talking(message: Message):
 async def select_homework(message: Message):
     if message.text == 'Назад':
         await bp.state_dispenser.delete(message.peer_id)
+        return message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
     subject = message.text
     homework = ctx_storage.get('homework')
     if subject not in homework.keys():

@@ -53,6 +53,8 @@ async def talking(message: Message):
 
 @bp.on.message(state=States.SELECT_HOMEWORK_STATE)
 async def select_homework(message: Message):
+    if message.text == 'Назад':
+        await bp.state_dispenser.delete(message.peer_id)
     subject = message.text
     homework = ctx_storage.get('homework')
     if subject not in homework.keys():

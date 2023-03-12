@@ -19,6 +19,8 @@ class SelectHomeworkKeyboard(object):
         self.keyboard = Keyboard(one_time=True, inline=False)
         for subject in ctx_storage.get('homework'):
             self.keyboard.add(Text(subject), color=KeyboardButtonColor.SECONDARY)
+        self.keyboard.row()
+        self.keyboard.add(Text('Назад'), color=KeyboardButtonColor.SECONDARY)
 
     def get_keyboard(self):
         self.__init__()

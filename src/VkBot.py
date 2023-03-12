@@ -1,16 +1,24 @@
 import json
-
 import os
-from dotenv import load_dotenv
 from pathlib import Path
-from vkbottle import Bot, CtxStorage, load_blueprints_from_package
+
+from aiohttp import ClientSession
+from aiohttp_proxy import ProxyConnector
+from dotenv import load_dotenv
+from vkbottle import API, Bot, load_blueprints_from_package
+from vkbottle.http import AiohttpClient
+
 from keyboard.keyboards import *
 
 ctx_storage = CtxStorage()
 
 
 def main():
-    bot = Bot(token=os.getenv('TOKEN'))
+    connector = ProxyConnector.from_url('http://proxy.server:3128')
+    session = ClientSession(connector=connector)
+    proxy = AiohttpClient(session=session)
+    api = API(token=os.getenv('TOKEN'), http_client=proxy)
+    bot = Bot(api=api)
 
     for bp in load_blueprints_from_package("blueprints"):
         bp.load(bot)

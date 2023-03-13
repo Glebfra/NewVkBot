@@ -17,7 +17,7 @@ def main():
     connector = ProxyConnector.from_url('http://proxy.server:3128')
     session = ClientSession(connector=connector)
     proxy = AiohttpClient(session=session)
-    api = API(token=os.getenv('TOKEN'), http_client=proxy)
+    api = API(token=os.getenv('TOKEN'))
     bot = Bot(api=api)
 
     for bp in load_blueprints_from_package("blueprints"):
@@ -39,10 +39,11 @@ if __name__ == '__main__':
     ctx_storage.set('PROJECT_DIR', str(Path(__file__).resolve().parent.parent))
     ctx_storage.set('START_DATE', os.getenv('START_TIME'))
     ctx_storage.set('homework', load_json('homework.json'))
+    ctx_storage.set('schedule', os.getenv('SCHEDULE_URL'))
 
     ctx_storage.set('default_keyboard', DefaultKeyboard())
     ctx_storage.set('select_homework_keyboard', SelectHomeworkKeyboard())
     ctx_storage.set('admin_default_keyboard', AdminDefaultKeyboard())
-    ctx_storage.set('talking_keyboard', TalkingKeyboard())
+    ctx_storage.set('back_keyboard', BackKeyboard())
 
     main()

@@ -1,5 +1,6 @@
-import dotenv
 import os
+
+import dotenv
 from vkbottle import BaseStateGroup, CtxStorage
 from vkbottle.bot import Blueprint, Message, rules
 

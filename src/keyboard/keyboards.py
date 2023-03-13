@@ -8,6 +8,19 @@ class DefaultKeyboard(object):
         self.keyboard = Keyboard(one_time=True, inline=False)
         self.keyboard.add(Text("Домашка"), color=KeyboardButtonColor.PRIMARY)
         self.keyboard.add(Text("Добавить домашку"), color=KeyboardButtonColor.POSITIVE)
+        self.keyboard.row()
+        self.keyboard.add(Text("Расписание"), color=KeyboardButtonColor.SECONDARY)
+        self.keyboard.add(Text("Неделя"), color=KeyboardButtonColor.SECONDARY)
+
+    def get_keyboard(self):
+        self.__init__()
+        return self.keyboard
+
+
+class BackKeyboard(object):
+    def __init__(self):
+        self.keyboard = Keyboard(one_time=True, inline=False)
+        self.keyboard.add(Text("Назад"), color=KeyboardButtonColor.SECONDARY)
 
     def get_keyboard(self):
         self.__init__()
@@ -17,20 +30,12 @@ class DefaultKeyboard(object):
 class SelectHomeworkKeyboard(object):
     def __init__(self):
         self.keyboard = Keyboard(one_time=True, inline=False)
-        for subject in ctx_storage.get('homework'):
+        for index, subject in enumerate(ctx_storage.get('homework')):
+            if not index % 3 and index != 0:
+                self.keyboard.row()
             self.keyboard.add(Text(subject), color=KeyboardButtonColor.SECONDARY)
         self.keyboard.row()
         self.keyboard.add(Text('Назад'), color=KeyboardButtonColor.SECONDARY)
-
-    def get_keyboard(self):
-        self.__init__()
-        return self.keyboard
-
-
-class TalkingKeyboard(object):
-    def __init__(self):
-        self.keyboard = Keyboard(one_time=True, inline=False)
-        self.keyboard.add(Text('Хватит'), color=KeyboardButtonColor.NEGATIVE)
 
     def get_keyboard(self):
         self.__init__()

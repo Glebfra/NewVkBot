@@ -3,7 +3,7 @@ import os
 from vkbottle import BaseStateGroup, CtxStorage
 from vkbottle.bot import Blueprint, Message, rules
 
-bp = Blueprint("For admins")
+bp = Blueprint("Admin")
 bp.labeler.auto_rules = [rules.FromPeerRule(list(map(int, os.getenv('ADMINS').split(','))))]
 ctx_storage = CtxStorage()
 

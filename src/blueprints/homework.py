@@ -24,6 +24,15 @@ async def homework(message: Message):
     )
 
 
+@bp.on.message(text=['Добавить домашку'])
+async def add_homework(message: Message):
+    await bp.state_dispenser.set(message.peer_id, States.ADD_HOMEWORK_SUBJECT_STATE)
+    await message.answer(
+        'Введите предмет, по которому хотите добавить домашку',
+        keyboard=ctx_storage.get('select_homework_keyboard').get_keyboard()
+    )
+
+
 @bp.on.message(state=States.SELECT_HOMEWORK_STATE)
 async def select_homework(message: Message):
     if message.text == 'Назад':
@@ -60,7 +69,7 @@ async def add_homework_subject(message: Message):
     ctx_storage.set('subject', subject)
     await bp.state_dispenser.set(message.peer_id, States.ADD_HOMEWORK_VALUE_STATE, subject=subject)
     await message.answer(
-        "Введите домашку, или выберите добавить файл (фото или документы)"
+        "Введите домашку"
     )
 
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from vkbottle import BaseStateGroup, CtxStorage
+from vkbottle import CtxStorage
 from vkbottle.bot import Blueprint, Message
 
 bp = Blueprint("User")
@@ -9,6 +9,10 @@ ctx_storage = CtxStorage()
 
 @bp.on.message(text=['Начать'])
 async def start(message: Message):
+    try:
+        await bp.state_dispenser.delete(message.peer_id)
+    except Exception:
+        pass
     await message.answer(
         'Привет. Я бот. Еще маленький, но я развиваюсь',
         keyboard=ctx_storage.get('default_keyboard').get_keyboard()

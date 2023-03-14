@@ -20,7 +20,7 @@ def main():
     connector = ProxyConnector.from_url('http://proxy.server:3128')
     session = ClientSession(connector=connector)
     proxy = AiohttpClient(session=session)
-    api = API(token=os.getenv('TOKEN'))
+    api = API(token=os.getenv('TOKEN'), http_client=proxy)
     bot = Bot(api=api)
 
     for bp in load_blueprints_from_package("blueprints"):

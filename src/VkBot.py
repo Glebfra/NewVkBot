@@ -1,4 +1,7 @@
 import json
+
+import loguru
+from loguru import logger
 import os
 from pathlib import Path
 
@@ -45,5 +48,8 @@ if __name__ == '__main__':
     ctx_storage.set('select_homework_keyboard', SelectHomeworkKeyboard())
     ctx_storage.set('admin_default_keyboard', AdminDefaultKeyboard())
     ctx_storage.set('back_keyboard', BackKeyboard())
+
+    logger.enable('vkbottle')
+    logger.add(f'{ctx_storage.get("PROJECT_DIR")}/logs/vkbot.log', rotation=os.getenv('LOGS_AUTO_DELETE_SIZE'))
 
     main()

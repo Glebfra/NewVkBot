@@ -51,6 +51,8 @@ class AdminDefaultKeyboard(object):
         self.keyboard.add(Text('Добавить админа'), color=KeyboardButtonColor.POSITIVE)
         self.keyboard.add(Text('Удалить админа'), color=KeyboardButtonColor.NEGATIVE)
         self.keyboard.row()
+        self.keyboard.add(Text('Удалить предмет'), color=KeyboardButtonColor.NEGATIVE)
+        self.keyboard.row()
         self.keyboard.add(Text('Отправить всем!'), color=KeyboardButtonColor.NEGATIVE)
 
     def get_keyboard(self):

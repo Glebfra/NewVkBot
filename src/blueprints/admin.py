@@ -45,8 +45,8 @@ async def delete_subject(message: Message):
 async def delete_subject_state(message: Message):
     subject = message.text
     try:
-        homework: dict = ctx_storage.get('homework')
-        homework.pop(subject, '123')
+        homework = ctx_storage.get('homework')
+        homework.pop(subject)
         ctx_storage.set('homework', homework)
         save_json('homework.json', homework)
 

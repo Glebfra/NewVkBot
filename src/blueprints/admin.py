@@ -97,5 +97,5 @@ async def delete_admin_state(message: Message):
 
 
 def save_json(filename, data):
-    with open(f'{ctx_storage.get("")}/data/{filename}', 'w') as file:
+    with open(f'{ctx_storage.get("PROJECT_DIR")}/data/{filename}', 'w') as file:
         json.dump(data, file)

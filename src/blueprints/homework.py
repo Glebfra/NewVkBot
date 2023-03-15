@@ -66,6 +66,11 @@ async def add_homework_subject(message: Message):
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
     subject = message.text
+    if len(subject) > 30:
+        return await message.answer(
+            'Брат, братишка, я столько символов не запомню(',
+            keyboard=ctx_storage.get('select_homework_keyboard').get_keyboard()
+        )
     ctx_storage.set('subject', subject)
     await bp.state_dispenser.set(message.peer_id, States.ADD_HOMEWORK_VALUE_STATE, subject=subject)
     await message.answer(
@@ -79,6 +84,10 @@ async def add_homework_value(message: Message):
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
     value = message.text
+    if len(value) > 200:
+        return await message.answer(
+            'Брат, братишка, я столько символов не запомню('
+        )
     subject = message.state_peer.payload['subject']
     homework = ctx_storage.get('homework')
     if subject not in homework:

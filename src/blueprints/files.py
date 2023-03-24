@@ -43,7 +43,8 @@ async def select_file(message: Message):
             doc_files.append(await doc_uploader.upload(file['name'], file['source'], peer_id=message.peer_id))
         return await message.answer(
             'Вот твои файлы',
-            attachment=doc_files
+            attachment=doc_files,
+            keyboard=ctx_storage.get('default_keyboard').get_keyboard()
         )
     else:
         return await message.answer(

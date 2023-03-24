@@ -41,6 +41,7 @@ async def select_file(message: Message):
     if message.text in files.keys():
         for file in files[message.text]:
             doc_files.append(await doc_uploader.upload(file['name'], file['source'], peer_id=message.peer_id))
+        await bp.state_dispenser.delete(message.peer_id)
         return await message.answer(
             'Вот твои файлы',
             attachment=doc_files,

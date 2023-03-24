@@ -6,6 +6,7 @@ from vkbottle.bot import Blueprint, Message
 
 bp = Blueprint("Homework")
 ctx_storage = CtxStorage()
+save_json = ctx_storage.get('save_json')
 
 
 class States(BaseStateGroup):
@@ -97,14 +98,9 @@ async def add_homework_value(message: Message):
         'value': value
     })
     ctx_storage.set('homework', homework)
-    save_json('homework.json', homework)
+    save_json('data/homework.json', homework)
     await bp.state_dispenser.delete(message.peer_id)
     await message.answer(
         'Домашка успешно записана',
         keyboard=ctx_storage.get('default_keyboard').get_keyboard()
     )
-
-
-def save_json(filename, data):
-    with open(f'{ctx_storage.get("PROJECT_DIR")}/data/{filename}', 'w') as file:
-        json.dump(data, file)

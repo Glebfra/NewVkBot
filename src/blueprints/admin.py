@@ -8,6 +8,7 @@ from vkbottle.bot import Blueprint, Message, rules
 bp = Blueprint("Admin")
 bp.labeler.auto_rules = [rules.FromPeerRule(list(map(int, os.getenv('ADMINS').split(','))))]
 ctx_storage = CtxStorage()
+save_json = ctx_storage.get('save_json')
 
 
 class States(BaseStateGroup):
@@ -48,7 +49,7 @@ async def delete_subject_state(message: Message):
         homework = ctx_storage.get('homework')
         homework.pop(subject)
         ctx_storage.set('homework', homework)
-        save_json('homework.json', homework)
+        save_json('data/homework.json', homework)
 
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer(
@@ -94,8 +95,3 @@ async def delete_admin_state(message: Message):
         await message.answer(f'Пользователь с id {user_id} успешно удален')
     except ValueError:
         await message.answer('Id пользователя может быть только численным!')
-
-
-def save_json(filename, data):
-    with open(f'{ctx_storage.get("PROJECT_DIR")}/data/{filename}', 'w') as file:
-        json.dump(data, file)

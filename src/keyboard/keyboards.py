@@ -3,33 +3,37 @@ from vkbottle import CtxStorage, Keyboard, KeyboardButtonColor, Text
 ctx_storage = CtxStorage()
 
 
-class DefaultKeyboard(object):
+class AbstractKeyboard(object):
     def __init__(self):
         self.keyboard = Keyboard(one_time=True, inline=False)
-        self.keyboard.add(Text("Домашка"), color=KeyboardButtonColor.PRIMARY)
-        self.keyboard.add(Text("Добавить домашку"), color=KeyboardButtonColor.POSITIVE)
-        self.keyboard.row()
-        self.keyboard.add(Text("Расписание"), color=KeyboardButtonColor.SECONDARY)
-        self.keyboard.add(Text("Неделя"), color=KeyboardButtonColor.SECONDARY)
 
     def get_keyboard(self):
         self.__init__()
         return self.keyboard
 
 
-class BackKeyboard(object):
+class DefaultKeyboard(AbstractKeyboard):
     def __init__(self):
-        self.keyboard = Keyboard(one_time=True, inline=False)
+        super().__init__()
+        self.keyboard.add(Text("Домашка"), color=KeyboardButtonColor.SECONDARY)
+        self.keyboard.add(Text("Расписание"), color=KeyboardButtonColor.SECONDARY)
+        self.keyboard.row()
+        self.keyboard.add(Text("Неделя"), color=KeyboardButtonColor.SECONDARY)
+        self.keyboard.add(Text("Файлы"), color=KeyboardButtonColor.SECONDARY)
+        self.keyboard.row()
+        self.keyboard.add(Text("Добавить домашку"), color=KeyboardButtonColor.POSITIVE)
+        self.keyboard.add(Text("Добавить файл"), color=KeyboardButtonColor.POSITIVE)
+
+
+class BackKeyboard(AbstractKeyboard):
+    def __init__(self):
+        super().__init__()
         self.keyboard.add(Text("Назад"), color=KeyboardButtonColor.SECONDARY)
 
-    def get_keyboard(self):
-        self.__init__()
-        return self.keyboard
 
-
-class SelectHomeworkKeyboard(object):
+class SelectHomeworkKeyboard(AbstractKeyboard):
     def __init__(self):
-        self.keyboard = Keyboard(one_time=True, inline=False)
+        super().__init__()
         for index, subject in enumerate(ctx_storage.get('homework')):
             if not index % 3 and index != 0:
                 self.keyboard.row()
@@ -37,14 +41,10 @@ class SelectHomeworkKeyboard(object):
         self.keyboard.row()
         self.keyboard.add(Text('Назад'), color=KeyboardButtonColor.SECONDARY)
 
-    def get_keyboard(self):
-        self.__init__()
-        return self.keyboard
 
-
-class AdminDefaultKeyboard(object):
+class AdminDefaultKeyboard(AbstractKeyboard):
     def __init__(self):
-        self.keyboard = Keyboard(one_time=True, inline=False)
+        super().__init__()
         self.keyboard.add(Text('Домашка'), color=KeyboardButtonColor.PRIMARY)
         self.keyboard.add(Text('Добавить домашку'), color=KeyboardButtonColor.POSITIVE)
         self.keyboard.row()
@@ -55,6 +55,13 @@ class AdminDefaultKeyboard(object):
         self.keyboard.row()
         self.keyboard.add(Text('Отправить всем!'), color=KeyboardButtonColor.NEGATIVE)
 
-    def get_keyboard(self):
-        self.__init__()
-        return self.keyboard
+
+class SelectFilesKeyboard(AbstractKeyboard):
+    def __init__(self):
+        super().__init__()
+        for index, file in enumerate(ctx_storage.get('files')):
+            if not index % 3 and index != 0:
+                self.keyboard.row()
+            self.keyboard.add(Text(file), color=KeyboardButtonColor.SECONDARY)
+        self.keyboard.row()
+        self.keyboard.add(Text('Назад'), color=KeyboardButtonColor.SECONDARY)

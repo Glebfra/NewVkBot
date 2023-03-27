@@ -23,6 +23,8 @@ class DefaultKeyboard(AbstractKeyboard):
         self.keyboard.row()
         self.keyboard.add(Text("Добавить домашку"), color=KeyboardButtonColor.POSITIVE)
         self.keyboard.add(Text("Добавить файл"), color=KeyboardButtonColor.POSITIVE)
+        self.keyboard.row()
+        self.keyboard.add(Text("ChatGPT"), color=KeyboardButtonColor.PRIMARY)
 
 
 class BackKeyboard(AbstractKeyboard):

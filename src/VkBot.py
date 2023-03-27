@@ -53,6 +53,7 @@ if __name__ == '__main__':
     ctx_storage.set('homework', load_json('data/homework.json'))
     ctx_storage.set('files', load_json('data/files/files.json'))
     ctx_storage.set('schedule', os.getenv('SCHEDULE_URL'))
+    ctx_storage.set('open_ai_token', os.getenv('OPEN_AI_TOKEN'))
 
     ctx_storage.set('default_keyboard', DefaultKeyboard())
     ctx_storage.set('select_homework_keyboard', SelectHomeworkKeyboard())

@@ -2,12 +2,9 @@ import json
 import os
 from pathlib import Path
 
-from aiohttp import ClientSession
-from aiohttp_proxy import ProxyConnector
 from dotenv import load_dotenv
 from loguru import logger
 from vkbottle import API, Bot, DocMessagesUploader, load_blueprints_from_package
-from vkbottle.http import AiohttpClient
 
 from keyboard.keyboards import *
 
@@ -15,10 +12,7 @@ ctx_storage = CtxStorage()
 
 
 def main():
-    connector = ProxyConnector.from_url('http://proxy.server:3128')
-    session = ClientSession(connector=connector)
-    proxy = AiohttpClient(session=session)
-    api = API(token=os.getenv('TOKEN'), http_client=proxy)
+    api = API(token=os.getenv('TOKEN'))
     bot = Bot(api=api)
 
     doc_uploader = DocMessagesUploader(bot.api)

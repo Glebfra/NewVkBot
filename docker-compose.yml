@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  vkbot:
+    container_name: vkbot
+    volumes:
+      - ./venv:/VkBot/venv
+      - ./src:/VkBot/src
+      - ./data:/VkBot/data
+      - ./logs:/VkBot/logs
+    build: .

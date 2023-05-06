@@ -9,6 +9,8 @@ services:
       - ./data:/VkBot/data
       - ./logs:/VkBot/logs
     build: .
+    links:
+      - database
 
   database:
     container_name: mysql

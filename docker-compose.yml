@@ -9,3 +9,28 @@ services:
       - ./data:/VkBot/data
       - ./logs:/VkBot/logs
     build: .
+
+  database:
+    container_name: mysql
+    image: mysql
+    restart: always
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+
+  pma:
+    container_name: pma
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    links:
+      - database
+    environment:
+      - PMA_ARBITRARY=1

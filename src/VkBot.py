@@ -5,7 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from loguru import logger
 from peewee import *
-from vkbottle import API, Bot, DocMessagesUploader, load_blueprints_from_package, CtxStorage
+from vkbottle import API, Bot, CtxStorage, DocMessagesUploader, load_blueprints_from_package
 
 ctx_storage = CtxStorage()
 
@@ -42,9 +42,10 @@ if __name__ == '__main__':
     ctx_storage.set(
         'db', MySQLDatabase(
             'db_name', user=os.getenv('MYSQL_USER'), password=os.getenv('MYSQL_PASSWORD'), host='database', port=3306
-            )
         )
+    )
 
+    # Prepare models
     from models.Homework import Homework
     from models.Subject import Subject
     from models.User import User
@@ -53,24 +54,23 @@ if __name__ == '__main__':
     ctx_storage.set('Subject', Subject)
     ctx_storage.set('User', User)
 
+    # Prepare env variables
     ctx_storage.set('save_json', save_json)
     ctx_storage.set('load_json', load_json)
 
     ctx_storage.set('PROJECT_DIR', str(Path(__file__).resolve().parent.parent))
     ctx_storage.set('START_DATE', os.getenv('START_TIME'))
-    ctx_storage.set('homework', load_json('data/homework.json'))
     ctx_storage.set('files', load_json('data/files/files.json'))
     ctx_storage.set('schedule', os.getenv('SCHEDULE_URL'))
     ctx_storage.set('open_ai_token', os.getenv('OPEN_AI_TOKEN'))
 
-
+    # Prepare keyboard module
     from keyboard.keyboards import *
 
     ctx_storage.set('default_keyboard', DefaultKeyboard())
     ctx_storage.set('select_homework_keyboard', SelectHomeworkKeyboard())
     ctx_storage.set('admin_default_keyboard', AdminDefaultKeyboard())
     ctx_storage.set('back_keyboard', BackKeyboard())
-    ctx_storage.set('select_files_keyboard', SelectFilesKeyboard())
 
     logger.enable('vkbottle')
     logger.add(f'{ctx_storage.get("PROJECT_DIR")}/logs/vkbot.log', rotation=os.getenv('LOGS_AUTO_DELETE_SIZE'))

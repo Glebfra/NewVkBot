@@ -1,6 +1,3 @@
-import json
-from datetime import datetime
-
 from vkbottle import BaseStateGroup, CtxStorage
 from vkbottle.bot import Blueprint, Message
 
@@ -47,16 +44,17 @@ async def select_homework(message: Message):
             'Возвращаюсь назад',
             keyboard=ctx_storage.get('default_keyboard').get_keyboard()
         )
-    if db.is_closed():
-        db.connect()
-    if not (subject := Subject.select().where(Subject.name==message.text)):
+
+    db.connect()
+    if not (subject := Subject.get(Subject.name == message.text)):
         await message.answer(
             'Такого предмета не существует',
             keyboard=ctx_storage.get('select_homework_keyboard').get_keyboard()
         )
-    homeworks = Homework.select().where(Homework.subject==subject)
+    homeworks = Homework.select().where(Homework.subject == subject)
+    db.close()
 
-    response = f'-- {subject[0].name} -- \n'
+    response = f'-- {subject.name} -- \n'
     for homework in homeworks:
         response += f'[{homework.created_at}] {homework.text} \n'
     await bp.state_dispenser.delete(message.peer_id)
@@ -71,9 +69,11 @@ async def add_homework_subject(message: Message):
     if message.text == 'Назад':
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
-    if db.is_closed():
-        db.connect()
+
+    db.connect()
     subject, created = Subject.get_or_create(name=message.text)
+    db.close()
+
     ctx_storage.set('subject', subject)
     await bp.state_dispenser.set(message.peer_id, States.ADD_HOMEWORK_VALUE_STATE, subject=subject)
     await message.answer(
@@ -88,11 +88,11 @@ async def add_homework_value(message: Message):
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
 
-    if db.is_closed():
-        db.connect()
+    db.connect()
     subject = message.state_peer.payload['subject']
     user, created = User.get_or_create(vk_id=message.peer_id)
     Homework.create(subject=subject, text=message.text, created_by=user)
+    db.close()
 
     await bp.state_dispenser.delete(message.peer_id)
     await message.answer(

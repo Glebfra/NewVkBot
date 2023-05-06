@@ -2,6 +2,8 @@ from vkbottle import CtxStorage, Keyboard, KeyboardButtonColor, Text
 
 ctx_storage = CtxStorage()
 
+Subject = ctx_storage.get('Subject')
+
 
 class AbstractKeyboard(object):
     def __init__(self):
@@ -36,10 +38,10 @@ class BackKeyboard(AbstractKeyboard):
 class SelectHomeworkKeyboard(AbstractKeyboard):
     def __init__(self):
         super().__init__()
-        for index, subject in enumerate(ctx_storage.get('homework')):
+        for index, subject in enumerate(Subject.select()):
             if not index % 3 and index != 0:
                 self.keyboard.row()
-            self.keyboard.add(Text(subject), color=KeyboardButtonColor.SECONDARY)
+            self.keyboard.add(Text(subject.name), color=KeyboardButtonColor.SECONDARY)
         self.keyboard.row()
         self.keyboard.add(Text('Назад'), color=KeyboardButtonColor.SECONDARY)
 

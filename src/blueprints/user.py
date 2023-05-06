@@ -6,6 +6,8 @@ from vkbottle.bot import Blueprint, Message
 bp = Blueprint("User")
 ctx_storage = CtxStorage()
 
+User = ctx_storage.get('User')
+
 
 @bp.on.message(text=['Начать'])
 async def start(message: Message):
@@ -13,6 +15,7 @@ async def start(message: Message):
         await bp.state_dispenser.delete(message.peer_id)
     except Exception:
         pass
+    user, created = User.get_or_create(vk_id=message.peer_id)
     await message.answer(
         'Привет. Я бот. Еще маленький, но я развиваюсь',
         keyboard=ctx_storage.get('default_keyboard').get_keyboard()

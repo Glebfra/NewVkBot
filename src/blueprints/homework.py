@@ -8,6 +8,10 @@ bp = Blueprint("Homework")
 ctx_storage = CtxStorage()
 save_json = ctx_storage.get('save_json')
 
+Homework = ctx_storage.get('Homework')
+Subject = ctx_storage.get('Subject')
+User = ctx_storage.get('User')
+
 
 class States(BaseStateGroup):
     ADD_HOMEWORK_SUBJECT_STATE = "add_homework_subject"
@@ -42,18 +46,16 @@ async def select_homework(message: Message):
             'Возвращаюсь назад',
             keyboard=ctx_storage.get('default_keyboard').get_keyboard()
         )
-    subject = message.text
-    homework = ctx_storage.get('homework')
-    if subject not in homework.keys():
+    if not (subject := Subject.select().where(Subject.name==message.text)):
         await message.answer(
             'Такого предмета не существует',
             keyboard=ctx_storage.get('select_homework_keyboard').get_keyboard()
         )
-    subject_homework = homework[subject]
+    homeworks = Homework.select().where(Homework.subject==subject)
 
-    response = f'-- {subject} -- \n'
-    for homework in subject_homework:
-        response += f'[{homework["date"]}] {homework["value"]} \n'
+    response = f'-- {subject[0].name} -- \n'
+    for homework in homeworks:
+        response += f'[{homework.created_at}] {homework.text} \n'
     await bp.state_dispenser.delete(message.peer_id)
     await message.answer(
         response,
@@ -66,16 +68,12 @@ async def add_homework_subject(message: Message):
     if message.text == 'Назад':
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
-    subject = message.text
-    if len(subject) > 30:
-        return await message.answer(
-            'Брат, братишка, я столько символов не запомню(',
-            keyboard=ctx_storage.get('select_homework_keyboard').get_keyboard()
-        )
+    subject, created = Subject.get_or_create(name=message.text)
     ctx_storage.set('subject', subject)
     await bp.state_dispenser.set(message.peer_id, States.ADD_HOMEWORK_VALUE_STATE, subject=subject)
     await message.answer(
-        "Введите домашку"
+        "Введите домашку",
+        keyboard=ctx_storage.get('back_keyboard').get_keyboard()
     )
 
 
@@ -84,21 +82,11 @@ async def add_homework_value(message: Message):
     if message.text == 'Назад':
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
-    value = message.text
-    if len(value) > 200:
-        return await message.answer(
-            'Брат, братишка, я столько символов не запомню('
-        )
+
     subject = message.state_peer.payload['subject']
-    homework = ctx_storage.get('homework')
-    if subject not in homework:
-        homework[subject] = []
-    homework[subject].append({
-        'date': str(datetime.now().date()),
-        'value': value
-    })
-    ctx_storage.set('homework', homework)
-    save_json('data/homework.json', homework)
+    user, created = User.get_or_create(vk_id=message.peer_id)
+    Homework.create(subject=subject, text=message.text, created_by=user)
+
     await bp.state_dispenser.delete(message.peer_id)
     await message.answer(
         'Домашка успешно записана',

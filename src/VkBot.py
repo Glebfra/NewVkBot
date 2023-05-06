@@ -4,9 +4,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from loguru import logger
-from vkbottle import API, Bot, DocMessagesUploader, load_blueprints_from_package
-
-from keyboard.keyboards import *
+from peewee import *
+from vkbottle import API, Bot, DocMessagesUploader, load_blueprints_from_package, CtxStorage
 
 ctx_storage = CtxStorage()
 
@@ -39,6 +38,21 @@ if __name__ == '__main__':
     load_dotenv('../.env')
 
     ctx_storage = CtxStorage()
+
+    ctx_storage.set(
+        'db', MySQLDatabase(
+            'db_name', user=os.getenv('MYSQL_USER'), password=os.getenv('MYSQL_PASSWORD'), host='database', port=3306
+            )
+        )
+
+    from models.Homework import Homework
+    from models.Subject import Subject
+    from models.User import User
+
+    ctx_storage.set('Homework', Homework)
+    ctx_storage.set('Subject', Subject)
+    ctx_storage.set('User', User)
+
     ctx_storage.set('save_json', save_json)
     ctx_storage.set('load_json', load_json)
 
@@ -48,6 +62,9 @@ if __name__ == '__main__':
     ctx_storage.set('files', load_json('data/files/files.json'))
     ctx_storage.set('schedule', os.getenv('SCHEDULE_URL'))
     ctx_storage.set('open_ai_token', os.getenv('OPEN_AI_TOKEN'))
+
+
+    from keyboard.keyboards import *
 
     ctx_storage.set('default_keyboard', DefaultKeyboard())
     ctx_storage.set('select_homework_keyboard', SelectHomeworkKeyboard())

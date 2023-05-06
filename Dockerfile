@@ -4,10 +4,9 @@ RUN mkdir /VkBot
 WORKDIR /VkBot
 COPY . /VkBot
 
-RUN python3 -m venv /VkBot/venv
 RUN source /VkBot/venv/bin/activate
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 WORKDIR /VkBot/src
 

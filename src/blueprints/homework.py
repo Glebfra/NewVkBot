@@ -11,6 +11,7 @@ save_json = ctx_storage.get('save_json')
 Homework = ctx_storage.get('Homework')
 Subject = ctx_storage.get('Subject')
 User = ctx_storage.get('User')
+db = ctx_storage.get('db')
 
 
 class States(BaseStateGroup):
@@ -46,6 +47,8 @@ async def select_homework(message: Message):
             'Возвращаюсь назад',
             keyboard=ctx_storage.get('default_keyboard').get_keyboard()
         )
+    if db.is_closed():
+        db.connect()
     if not (subject := Subject.select().where(Subject.name==message.text)):
         await message.answer(
             'Такого предмета не существует',
@@ -68,6 +71,8 @@ async def add_homework_subject(message: Message):
     if message.text == 'Назад':
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
+    if db.is_closed():
+        db.connect()
     subject, created = Subject.get_or_create(name=message.text)
     ctx_storage.set('subject', subject)
     await bp.state_dispenser.set(message.peer_id, States.ADD_HOMEWORK_VALUE_STATE, subject=subject)
@@ -83,6 +88,8 @@ async def add_homework_value(message: Message):
         await bp.state_dispenser.delete(message.peer_id)
         return await message.answer('Возвращаюсь назад', keyboard=ctx_storage.get('default_keyboard').get_keyboard())
 
+    if db.is_closed():
+        db.connect()
     subject = message.state_peer.payload['subject']
     user, created = User.get_or_create(vk_id=message.peer_id)
     Homework.create(subject=subject, text=message.text, created_by=user)

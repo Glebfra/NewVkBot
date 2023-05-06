@@ -38,6 +38,9 @@ class BackKeyboard(AbstractKeyboard):
 class SelectHomeworkKeyboard(AbstractKeyboard):
     def __init__(self):
         super().__init__()
+        db = ctx_storage.get('db')
+        if db.is_closed():
+            db.connect()
         for index, subject in enumerate(Subject.select()):
             if not index % 3 and index != 0:
                 self.keyboard.row()
